@@ -626,9 +626,13 @@ public class CosmosDataAccessor {
       String partitionPath, Timer timer) throws CosmosException {
     CosmosChangeFeedRequestOptions cosmosChangeFeedRequestOptions;
     if (Utils.isNullOrEmpty(requestContinuationToken)) {
+      //TODO: Add metrics too to keep track of when change feed is queried from beginning.
+      logger.info("Querying change feed for partition {} from beginning", partitionPath);
       cosmosChangeFeedRequestOptions = CosmosChangeFeedRequestOptions.createForProcessingFromBeginning(
           FeedRange.forLogicalPartition(new PartitionKey(partitionPath)));
     } else {
+      logger.debug("Querying change feed for partition {} from continuation token {}", partitionPath,
+          requestContinuationToken);
       cosmosChangeFeedRequestOptions =
           CosmosChangeFeedRequestOptions.createForProcessingFromContinuation(requestContinuationToken);
     }
